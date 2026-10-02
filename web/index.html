@@ -562,7 +562,7 @@
               <span class="evi-card-tag">10 × 10 · MNIST TEST SET</span>
             </div>
             <div class="evi-card-body" style="text-align:center;">
-              <img src="confusion_matrix.png" alt="10×10 Confusion Matrix" style="max-width:480px; margin:0 auto;"
+              <img src="confusion_matrix.png" alt="10×10 Confusion Matrix" class="cm-img"
                 onerror="this.style.opacity='0.3'; this.alt='confusion_matrix.png';">
             </div>
           </div>
@@ -573,23 +573,25 @@
               <span class="evi-card-tag">PRECISION · RECALL · F1</span>
             </div>
             <div class="evi-card-body">
-              <table class="clf-table">
-                <thead>
-                  <tr><th>CLASS</th><th>PRECISION</th><th>RECALL</th><th>F1-SCORE</th><th>SUPPORT</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>0</td><td>99.09%</td><td>99.49%</td><td>99.29%</td><td>980</td></tr>
-                  <tr><td>1</td><td>99.38%</td><td>99.47%</td><td>99.43%</td><td>1135</td></tr>
-                  <tr><td>2</td><td>99.03%</td><td>98.84%</td><td>98.93%</td><td>1032</td></tr>
-                  <tr><td>3</td><td>99.02%</td><td>99.60%</td><td>99.31%</td><td>1010</td></tr>
-                  <tr><td>4</td><td>98.69%</td><td>99.49%</td><td>99.09%</td><td>982</td></tr>
-                  <tr><td>5</td><td>99.44%</td><td>98.88%</td><td>99.16%</td><td>892</td></tr>
-                  <tr><td>6</td><td>99.47%</td><td>98.75%</td><td>99.11%</td><td>958</td></tr>
-                  <tr><td>7</td><td>98.36%</td><td>99.22%</td><td>98.79%</td><td>1028</td></tr>
-                  <tr><td>8</td><td>99.38%</td><td>99.08%</td><td>99.23%</td><td>974</td></tr>
-                  <tr><td>9</td><td>99.50%</td><td>98.41%</td><td>98.95%</td><td>1009</td></tr>
-                </tbody>
-              </table>
+              <div class="clf-table-wrap">
+                <table class="clf-table">
+                  <thead>
+                    <tr><th>CLASS</th><th>PRECISION</th><th>RECALL</th><th>F1-SCORE</th><th>SUPPORT</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>0</td><td>99.09%</td><td>99.49%</td><td>99.29%</td><td>980</td></tr>
+                    <tr><td>1</td><td>99.38%</td><td>99.47%</td><td>99.43%</td><td>1135</td></tr>
+                    <tr><td>2</td><td>99.03%</td><td>98.84%</td><td>98.93%</td><td>1032</td></tr>
+                    <tr><td>3</td><td>99.02%</td><td>99.60%</td><td>99.31%</td><td>1010</td></tr>
+                    <tr><td>4</td><td>98.69%</td><td>99.49%</td><td>99.09%</td><td>982</td></tr>
+                    <tr><td>5</td><td>99.44%</td><td>98.88%</td><td>99.16%</td><td>892</td></tr>
+                    <tr><td>6</td><td>99.47%</td><td>98.75%</td><td>99.11%</td><td>958</td></tr>
+                    <tr><td>7</td><td>98.36%</td><td>99.22%</td><td>98.79%</td><td>1028</td></tr>
+                    <tr><td>8</td><td>99.38%</td><td>99.08%</td><td>99.23%</td><td>974</td></tr>
+                    <tr><td>9</td><td>99.50%</td><td>98.41%</td><td>98.95%</td><td>1009</td></tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -604,7 +606,7 @@
         </div>
 
         <!-- About section inline -->
-        <div style="margin-top: 64px; width:100%; max-width: 600px;">
+        <div class="about-container">
           <div class="sec-heading">
             <span class="sec-num">ABOUT</span>
             <h2 class="sec-title">About NEUROGLYPH</h2>

@@ -638,4 +638,97 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 
+  // ============================================================
+  // Scroll Reveal Animations for Cards
+  // ============================================================
+  (function initCardScrollReveal() {
+    const cardSelectors = [
+      ".transform-step",
+      ".arch-flow",
+      ".stats-grid",
+      ".lens-stage",
+      ".evi-metric",
+      ".evi-card",
+      ".exp-note",
+      ".about-specs",
+      ".about-subsection",
+      ".about-academic-note"
+    ];
+
+    const cards = document.querySelectorAll(cardSelectors.join(", "));
+    if (cards.length === 0) return;
+
+    // Accessibility & Compatibility Check
+    const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+      // Safe default: immediately ensure all cards are visible
+      cards.forEach(card => card.classList.add("is-visible"));
+      return;
+    }
+
+    // Apply minimal stagger delay between sibling cards in identical parent groups
+    const staggerGroups = [
+      document.querySelectorAll(".transformation-flow .transform-step"),
+      document.querySelectorAll(".evidence-metrics .evi-metric"),
+      document.querySelectorAll(".evidence-grid .evi-card"),
+      document.querySelectorAll(".lens-pipeline .lens-stage"),
+      document.querySelectorAll(".about-content > .about-subsection"),
+    ];
+
+    staggerGroups.forEach(group => {
+      group.forEach((card, idx) => {
+        const delay = Math.min(idx * 40, 160);
+        if (delay > 0) {
+          card.style.transitionDelay = `${delay}ms`;
+        }
+      });
+    });
+
+    // Cleanup transitionDelay after reveal transition ends so hover effects have 0ms delay
+    cards.forEach(card => {
+      card.addEventListener("transitionend", (e) => {
+        if (e.propertyName === "opacity" || e.propertyName === "transform") {
+          card.style.transitionDelay = "";
+          card.style.willChange = "auto";
+        }
+      }, { once: true });
+    });
+
+    // Initial viewport check: cards already visible or near the fold (e.g. reload halfway down)
+    // are revealed immediately with no flash or delay
+    const initialCutoff = window.innerHeight + 80;
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top <= initialCutoff && rect.bottom >= -80) {
+        card.classList.add("is-visible");
+      }
+    });
+
+    // IntersectionObserver with threshold 0.08 and generous 120px bottom rootMargin
+    // Detects cards 120px before entering visible viewport, ensuring smooth entry even during fast scroll
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          // Permanently reveal: unobserve so state is never reset on subsequent scrolls
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: "0px 0px 120px 0px"
+    });
+
+    // Observe remaining cards
+    cards.forEach(card => {
+      if (!card.classList.contains("is-visible")) {
+        revealObserver.observe(card);
+      }
+    });
+
+    // Enable CSS transitions after initial visibility check
+    document.documentElement.classList.add("reveal-enabled");
+  })();
+
 });
+

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEUROGLYPH — Where Handwriting Meets Intelligence</title>
+  <meta name="description" content="An interactive neural network that transforms handwritten strokes into digital understanding. Draw a digit. Watch the network understand it.">
+  <meta name="theme-color" content="#07080A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============================================================
+       TOP NAVIGATION
+       ============================================================ -->
+  <nav class="topnav" aria-label="Main navigation">
+    <div class="topnav-brand">
+      <span class="brand-neuro">NEURO</span><span class="brand-glyph">GLYPH</span>
+      <span class="brand-stroke" aria-hidden="true"></span>
+    </div>
+
+    <div class="topnav-sections">
+      <button class="nav-link active" data-section="sec-stroke">
+        <span class="nav-num">01</span> STROKE
+      </button>
+      <button class="nav-link" data-section="sec-process">
+        <span class="nav-num">02</span> PROCESS
+      </button>
+      <button class="nav-link" data-section="sec-network">
+        <span class="nav-num">03</span> NETWORK
+      </button>
+      <button class="nav-link" data-section="sec-inference">
+        <span class="nav-num">04</span> INFERENCE
+      </button>
+      <button class="nav-link" data-section="sec-evidence">
+        <span class="nav-num">05</span> EVIDENCE
+      </button>
+    </div>
+
+    <div class="topnav-status">
+      <div class="status-dot" title="Model online"></div>
+      <span>CNN · MNIST · ONLINE</span>
+    </div>
+
+    <!-- Mobile toggle -->
+    <button class="mobile-nav-btn" id="mobile-nav-btn" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile nav -->
+  <div class="mobile-nav" id="mobile-nav">
+    <button class="nav-link active" data-section="sec-stroke"><span class="nav-num">01</span> STROKE</button>
+    <button class="nav-link" data-section="sec-process"><span class="nav-num">02</span> PROCESS</button>
+    <button class="nav-link" data-section="sec-network"><span class="nav-num">03</span> NETWORK</button>
+    <button class="nav-link" data-section="sec-inference"><span class="nav-num">04</span> INFERENCE</button>
+    <button class="nav-link" data-section="sec-evidence"><span class="nav-num">05</span> EVIDENCE</button>
+  </div>
+
+
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ===========================================================
+         01 — THE STROKE
+         =========================================================== -->
+    <section class="section" id="sec-stroke">
+      <div class="section-inner">
+
+        <!-- Studio Split Layout (Side-by-Side: Input Workspace & Telemetry Instrument) -->
+        <div class="studio-split-layout">
+
+          <!-- Left Column: Input Workspace -->
+          <div class="studio-col-workspace">
+            <!-- Header -->
+            <div class="stroke-header">
+              <div class="stroke-label">NEURAL INK</div>
+              <h1 class="stroke-title">
+                Draw a digit.<br><span class="dim">Watch the network understand it.</span>
+              </h1>
+              <p class="stroke-subtitle">Where handwriting meets intelligence.</p>
+            </div>
+
+            <!-- Neural Field -->
+            <div class="neural-field">
+              <!-- Canvas Instrument -->
+              <div class="canvas-instrument">
+                <!-- Top instrument bar -->
+                <div class="inst-bar-top">
+                  <span class="inst-tag"><span class="inst-num">01</span> INPUT FIELD</span>
+                  <span class="inst-spec">28 × 28 MATRIX</span>
+                </div>
+
+                <!-- Canvas frame -->
+                <div class="canvas-frame" id="canvas-frame">
+                  <div class="canvas-grid" aria-hidden="true"></div>
+                  <canvas id="digit-canvas" width="320" height="320"
+                    aria-label="Drawing canvas — draw one digit (0-9) using your trackpad or mouse"></canvas>
+                  <div class="canvas-placeholder" id="canvas-watermark">
+                    <div class="canvas-placeholder-main">DRAW HERE</div>
+                    <div class="canvas-placeholder-hint">TRACKPAD / FREEHAND INPUT</div>
+                  </div>
+                </div>
+
+                <!-- Bottom instrument bar -->
+                <div class="inst-bar-bottom">
+                  <span class="inst-type">TRACKPAD · TOUCH</span>
+                  <span class="inst-spec">320px → 28×28 TENSOR</span>
+                </div>
+              </div>
+
+              <!-- Controls -->
+              <div class="stroke-controls">
+                <button class="btn btn-ghost" id="clear-btn" aria-label="Clear canvas">CLEAR</button>
+                <button class="btn btn-primary" id="recognize-btn" aria-label="Analyze stroke" disabled>
+                  <span id="recognize-btn-text">ANALYZE STROKE</span>
+                </button>
+                <div class="toggle-row" id="live-toggle-row" title="Continuous real-time analysis as you draw">
+                  <label class="toggle-switch" aria-label="Toggle live analysis">
+                    <input type="checkbox" id="live-toggle">
+                    <span class="toggle-track"></span>
+                    <span class="toggle-thumb"></span>
+                  </label>
+                  <span class="toggle-text" id="live-toggle-text">LIVE ANALYSIS</span>
+                </div>
+              </div>
+
+              <!-- MNIST preset samples -->
+              <div class="presets-row">
+                <span class="presets-label">MNIST SAMPLE</span>
+                <button class="btn btn-preset preset-btn" data-digit="0">0</button>
+                <button class="btn btn-preset preset-btn" data-digit="1">1</button>
+                <button class="btn btn-preset preset-btn" data-digit="2">2</button>
+                <button class="btn btn-preset preset-btn" data-digit="3">3</button>
+                <button class="btn btn-preset preset-btn" data-digit="4">4</button>
+                <button class="btn btn-preset preset-btn" data-digit="5">5</button>
+                <button class="btn btn-preset preset-btn" data-digit="6">6</button>
+                <button class="btn btn-preset preset-btn" data-digit="7">7</button>
+                <button class="btn btn-preset preset-btn" data-digit="8">8</button>
+                <button class="btn btn-preset preset-btn" data-digit="9">9</button>
+              </div>
+            </div><!-- /neural-field -->
+          </div><!-- /studio-col-workspace -->
+
+          <!-- Right Column: Live Neural Telemetry Instrument -->
+          <div class="studio-col-telemetry">
+            <div class="telemetry-panel" id="telemetry-panel">
+              <div class="telemetry-top-bar">
+                <div class="telemetry-badge"><span class="badge-dot"></span> MODEL OUTPUT &amp; TELEMETRY</div>
+                <div class="telemetry-status" id="telemetry-status-pill">SYSTEM READY</div>
+              </div>
+
+              <!-- ═══════ RESULT BAR ═══════ -->
+              <div class="result-bar" id="result-bar">
+                <!-- Left: Raw stroke info -->
+                <div class="result-cell">
+                  <div class="result-cell-label">RAW STROKE</div>
+                  <div class="result-cell-value">TRACKPAD INPUT</div>
+                  <div class="result-cell-sub">320 × 320 CANVAS</div>
+                </div>
+                <!-- Center: Neural process -->
+                <div class="result-cell center-cell">
+                  <div class="result-cell-label">NEURAL PROCESS</div>
+                  <div class="result-process-flow" id="result-flow">
+                    <span>CAPTURE</span>
+                    <span class="flow-arrow">→</span>
+                    <span>NORMALIZE</span>
+                    <span class="flow-arrow">→</span>
+                    <span>CENTER</span>
+                    <span class="flow-arrow">→</span>
+                    <span>28×28</span>
+                    <span class="flow-arrow">→</span>
+                    <span>CNN</span>
+                    <span class="flow-arrow">→</span>
+                    <span class="flow-step-active" id="flow-result-digit">—</span>
+                  </div>
+                </div>
+                <!-- Right: Inference -->
+                <div class="result-cell pred-cell">
+                  <div class="result-cell-label">CLASSIFIED AS</div>
+                  <div class="pred-large-digit" id="pred-digit-val" aria-live="polite">—</div>
+                  <div class="pred-confidence" id="pred-conf-val" aria-live="polite">—</div>
+                  <div class="result-cell-label confidence-tag">MODEL CONFIDENCE</div>
+                </div>
+              </div>
+
+              <!-- ═══════ CLASS DISTRIBUTION ═══════ -->
+              <div class="classification-zone" id="classification-zone">
+                <div class="clf-header">
+                  <span class="clf-label">CLASS DISTRIBUTION</span>
+                  <span class="clf-dominant-badge" id="clf-dominant-label">AWAITING INFERENCE</span>
+                </div>
+                <div class="clf-grid" id="clf-grid">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- ═══════ MODEL INPUT STRIP ═══════ -->
+              <div class="model-input-strip" id="model-input-strip">
+                <div class="model-input-img" id="proc-img-box">
+                  <img id="proc-img-preview" src="" alt="28×28 grayscale normalized input to CNN">
+                  <span class="model-input-placeholder" id="proc-img-placeholder">28×28<br>—</span>
+                </div>
+                <div class="model-input-meta">
+                  <span class="meta-chip">28 × 28</span>
+                  <span class="meta-chip">NORMALIZED</span>
+                  <span class="meta-chip">GRAYSCALE</span>
+                  <span class="meta-chip active">CNN INPUT</span>
+                </div>
+                <div class="model-input-spec">
+                  PREPROCESSED · CENTERED · [0, 1]
+                </div>
+              </div>
+
+              <!-- ═══════ 4-STAGE PIPELINE INSPECTOR (COLLAPSIBLE & DEBUG TELEMETRY) ═══════ -->
+              <div class="pipeline-debug-panel collapsed" id="pipeline-debug-panel">
+                <button class="debug-panel-header" id="pipeline-toggle-btn" type="button" aria-expanded="false" aria-label="Toggle Pipeline Inspector">
+                  <div class="debug-panel-title">
+                    <span class="debug-badge"><span class="badge-dot" style="background:var(--cyan); box-shadow:0 0 8px var(--cyan-glow);"></span> PIPELINE INSPECTOR</span>
+                    <span class="debug-subtitle" id="pipeline-header-status">4 STAGES · READY</span>
+                  </div>
+                  <div class="debug-header-right">
+                    <div class="debug-meta-pills" id="debug-meta-pills">
+                      <span class="debug-pill" id="dbg-shape">TENSOR: —</span>
+                      <span class="debug-pill" id="dbg-range">RANGE: —</span>
+                      <span class="debug-pill" id="dbg-orientation">ORIENTATION: —</span>
+                    </div>
+                    <span class="inspector-chevron" id="inspector-chevron" aria-hidden="true">⌄</span>
+                  </div>
+                </button>
+
+                <div class="pipeline-debug-body" id="pipeline-debug-body">
+                  <div class="debug-stages-grid">
+                    <!-- Stage 1: Raw Canvas -->
+                    <div class="debug-stage-card">
+                      <div class="stage-tag">STAGE 01</div>
+                      <div class="stage-name">RAW CANVAS</div>
+                      <div class="stage-img-frame">
+                        <img id="dbg-img-raw" src="" alt="Raw canvas drawing" style="display:none;">
+                        <span class="stage-placeholder" id="dbg-raw-ph">— —</span>
+                      </div>
+                      <div class="stage-detail" id="dbg-raw-detail">RAW CANVAS — —</div>
+                    </div>
+
+                    <div class="debug-arrow">→</div>
+
+                    <!-- Stage 2: Bounding Box Cropped -->
+                    <div class="debug-stage-card">
+                      <div class="stage-tag">STAGE 02</div>
+                      <div class="stage-name">BOUNDING BOX</div>
+                      <div class="stage-img-frame">
+                        <img id="dbg-img-crop" src="" alt="Bounding box cropped digit" style="display:none;">
+                        <span class="stage-placeholder" id="dbg-crop-ph">— —</span>
+                      </div>
+                      <div class="stage-detail" id="dbg-crop-detail">BOUNDING BOX — —</div>
+                    </div>
+
+                    <div class="debug-arrow">→</div>
+
+                    <!-- Stage 3: Centered -->
+                    <div class="debug-stage-card">
+                      <div class="stage-tag">STAGE 03</div>
+                      <div class="stage-name">ASPECT SCALED</div>
+                      <div class="stage-img-frame">
+                        <img id="dbg-img-center" src="" alt="Aspect-ratio centered digit" style="display:none;">
+                        <span class="stage-placeholder" id="dbg-center-ph">— —</span>
+                      </div>
+                      <div class="stage-detail" id="dbg-center-detail">ASPECT SCALED — —</div>
+                    </div>
+
+                    <div class="debug-arrow">→</div>
+
+                    <!-- Stage 4: Final CNN Tensor -->
+                    <div class="debug-stage-card stage-final">
+                      <div class="stage-tag tag-final">STAGE 04</div>
+                      <div class="stage-name">CNN INPUT</div>
+                      <div class="stage-img-frame frame-final">
+                        <img id="dbg-img-final" src="" alt="Final 28x28 normalized input" style="display:none;">
+                        <span class="stage-placeholder" id="dbg-final-ph">— —</span>
+                      </div>
+                      <div class="stage-detail detail-final" id="dbg-final-detail">CNN INPUT — —</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div><!-- /telemetry-panel -->
+          </div><!-- /studio-col-telemetry -->
+
+        </div><!-- /studio-split-layout -->
+
+      </div>
+    </section>
+
+    <div class="sec-divider"></div>
+
+    <!-- ===========================================================
+         02 — THE TRANSFORMATION
+         =========================================================== -->
+    <section class="section" id="sec-process">
+      <div class="section-inner">
+        <div class="sec-heading">
+          <span class="sec-num">02</span>
+          <h2 class="sec-title">The Transformation</h2>
+          <p class="sec-desc">How your trackpad gesture becomes a neural input tensor.</p>
+        </div>
+
+        <div class="transformation-flow">
+          <div class="transform-step">
+            <div class="transform-step-num">STEP 01</div>
+            <div class="transform-step-title">Raw Stroke</div>
+            <div class="transform-step-desc">Trackpad movement captured as white ink on a 300×300 black canvas.</div>
+          </div>
+          <div class="transform-arrow">↓</div>
+          <div class="transform-step">
+            <div class="transform-step-num">STEP 02</div>
+            <div class="transform-step-title">Grayscale Extraction</div>
+            <div class="transform-step-desc">Alpha channel extracted. Background separated. Stroke isolated.</div>
+          </div>
+          <div class="transform-arrow">↓</div>
+          <div class="transform-step">
+            <div class="transform-step-num">STEP 03</div>
+            <div class="transform-step-title">Bounding + Centering</div>
+            <div class="transform-step-desc">Tight crop to bounding box. Aspect-ratio preserved. Centered in a 28×28 field.</div>
+          </div>
+          <div class="transform-arrow">↓</div>
+          <div class="transform-step">
+            <div class="transform-step-num">STEP 04</div>
+            <div class="transform-step-title">Normalization</div>
+            <div class="transform-step-desc">Pixel values mapped to [0, 1]. Reshaped to (1, 28, 28, 1) tensor. Ready for CNN.</div>
+          </div>
+          <div class="transform-arrow">↓</div>
+          <div class="transform-step" style="opacity:0.6;">
+            <div class="transform-step-num" style="color:var(--violet);">→ CNN</div>
+            <div class="transform-step-title" style="color:var(--violet);">Neural Inference</div>
+            <div class="transform-step-desc">Tensor enters the convolutional network.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sec-divider"></div>
+
+    <!-- ===========================================================
+         03 — THE NETWORK
+         =========================================================== -->
+    <section class="section" id="sec-network">
+      <div class="section-inner">
+        <div class="sec-heading">
+          <span class="sec-num">03</span>
+          <h2 class="sec-title">The Network</h2>
+          <p class="sec-desc">A convolutional neural network trained on 60,000 MNIST handwritten digits.</p>
+        </div>
+
+        <!-- Architecture flow -->
+        <div class="arch-flow">
+          <div class="arch-row input-row">
+            <span class="arch-tag">IN</span>
+            <span class="arch-name">Input</span>
+            <span class="arch-detail">28 × 28 × 1</span>
+          </div>
+          <div class="arch-row conv-row">
+            <span class="arch-tag">C1</span>
+            <span class="arch-name">Conv2D</span>
+            <span class="arch-detail">32 · 3×3 · ReLU</span>
+          </div>
+          <div class="arch-row norm-row">
+            <span class="arch-tag">BN</span>
+            <span class="arch-name">Batch Norm</span>
+            <span class="arch-detail">—</span>
+          </div>
+          <div class="arch-row pool-row">
+            <span class="arch-tag">MP</span>
+            <span class="arch-name">Max Pool</span>
+            <span class="arch-detail">2×2</span>
+          </div>
+          <div class="arch-row conv-row">
+            <span class="arch-tag">C2</span>
+            <span class="arch-name">Conv2D</span>
+            <span class="arch-detail">64 · 3×3 · ReLU</span>
+          </div>
+          <div class="arch-row norm-row">
+            <span class="arch-tag">BN</span>
+            <span class="arch-name">Batch Norm</span>
+            <span class="arch-detail">—</span>
+          </div>
+          <div class="arch-row pool-row">
+            <span class="arch-tag">MP</span>
+            <span class="arch-name">Max Pool</span>
+            <span class="arch-detail">2×2</span>
+          </div>
+          <div class="arch-row conv-row">
+            <span class="arch-tag">C3</span>
+            <span class="arch-name">Conv2D</span>
+            <span class="arch-detail">128 · 3×3 · ReLU</span>
+          </div>
+          <div class="arch-row norm-row">
+            <span class="arch-tag">BN</span>
+            <span class="arch-name">Batch Norm</span>
+            <span class="arch-detail">—</span>
+          </div>
+          <div class="arch-row">
+            <span class="arch-tag">FL</span>
+            <span class="arch-name">Flatten</span>
+            <span class="arch-detail">→ vector</span>
+          </div>
+          <div class="arch-row dense-row">
+            <span class="arch-tag">D1</span>
+            <span class="arch-name">Dense</span>
+            <span class="arch-detail">128 · ReLU</span>
+          </div>
+          <div class="arch-row">
+            <span class="arch-tag">DO</span>
+            <span class="arch-name">Dropout</span>
+            <span class="arch-detail">0.3</span>
+          </div>
+          <div class="arch-row output-row">
+            <span class="arch-tag">SM</span>
+            <span class="arch-name">Softmax</span>
+            <span class="arch-detail">10 classes</span>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-cell"><div class="stat-key">DATASET</div><div class="stat-val">MNIST</div></div>
+          <div class="stat-cell"><div class="stat-key">FRAMEWORK</div><div class="stat-val">TensorFlow 2.x / Keras</div></div>
+          <div class="stat-cell"><div class="stat-key">TRAINING SAMPLES</div><div class="stat-val">60,000</div></div>
+          <div class="stat-cell"><div class="stat-key">TEST SAMPLES</div><div class="stat-val">10,000</div></div>
+          <div class="stat-cell"><div class="stat-key">TOTAL PARAMETERS</div><div class="stat-val violet">897,802</div></div>
+          <div class="stat-cell"><div class="stat-key">OPTIMIZER</div><div class="stat-val">Adam (lr=0.001)</div></div>
+          <div class="stat-cell"><div class="stat-key">LOSS FUNCTION</div><div class="stat-val">Sparse Cat. Crossentropy</div></div>
+          <div class="stat-cell"><div class="stat-key">EPOCHS</div><div class="stat-val">20</div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sec-divider"></div>
+
+    <!-- ===========================================================
+         04 — THE DECISION (Model Lens)
+         =========================================================== -->
+    <section class="section" id="sec-inference">
+      <div class="section-inner">
+        <div class="sec-heading">
+          <span class="sec-num">04</span>
+          <h2 class="sec-title">The Decision</h2>
+          <p class="sec-desc">The full inference pipeline — from your stroke to classification.</p>
+        </div>
+
+        <div class="model-lens-section">
+          <!-- Lens toggle -->
+          <div class="lens-toggle-row">
+            <span class="lens-label">MODEL LENS</span>
+            <label class="toggle-switch" aria-label="Toggle model lens view">
+              <input type="checkbox" id="model-lens-toggle" checked>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+
+          <div class="lens-pipeline" id="lens-pipeline">
+            <div class="lens-stage">
+              <div class="lens-stage-label">YOUR STROKE</div>
+              <div class="lens-stage-content">Trackpad freehand input</div>
+            </div>
+            <div class="lens-arrow">↓</div>
+            <div class="lens-stage">
+              <div class="lens-stage-label">28 × 28 REPRESENTATION</div>
+              <div class="lens-stage-content">Normalized grayscale tensor</div>
+            </div>
+            <div class="lens-arrow">↓</div>
+            <div class="lens-stage">
+              <div class="lens-stage-label">CONVOLUTION</div>
+              <div class="lens-stage-content">3 layers · 32 → 64 → 128 filters</div>
+            </div>
+            <div class="lens-arrow">↓</div>
+            <div class="lens-stage">
+              <div class="lens-stage-label">FEATURE MAPS</div>
+              <div class="lens-stage-content">Spatial patterns extracted</div>
+            </div>
+            <div class="lens-arrow">↓</div>
+            <div class="lens-stage">
+              <div class="lens-stage-label">CLASSIFICATION</div>
+              <div class="lens-stage-content">Softmax → 10 probabilities</div>
+            </div>
+            <div class="lens-arrow">↓</div>
+            <div class="lens-stage">
+              <div class="lens-stage-label">PREDICTION</div>
+              <div class="lens-stage-content" id="lens-result" style="font-size: 24px; font-weight: 700; color: var(--violet);">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sec-divider"></div>
+
+    <!-- ===========================================================
+         05 — THE EVIDENCE
+         =========================================================== -->
+    <section class="section" id="sec-evidence">
+      <div class="section-inner">
+
+        <div class="evidence-header">
+          <div class="evidence-title">The Model, Measured.</div>
+          <div class="evidence-subtitle">MNIST TEST SET · 10,000 SAMPLES · EMPIRICAL</div>
+        </div>
+
+        <!-- Big metrics -->
+        <div class="evidence-metrics">
+          <div class="evi-metric">
+            <div class="evi-metric-val green">99.13%</div>
+            <div class="evi-metric-key">MNIST TEST ACCURACY</div>
+          </div>
+          <div class="evi-metric">
+            <div class="evi-metric-val">0.0265</div>
+            <div class="evi-metric-key">TEST LOSS</div>
+          </div>
+          <div class="evi-metric">
+            <div class="evi-metric-val violet">897,802</div>
+            <div class="evi-metric-key">PARAMETERS</div>
+          </div>
+          <div class="evi-metric">
+            <div class="evi-metric-val">10</div>
+            <div class="evi-metric-key">OUTPUT CLASSES</div>
+          </div>
+        </div>
+
+        <!-- Training graphs -->
+        <div class="evidence-grid">
+          <div class="evi-card">
+            <div class="evi-card-header">
+              <span class="evi-card-title">TRAINING CONVERGENCE</span>
+              <span class="evi-card-tag">ACCURACY · 20 EPOCHS</span>
+            </div>
+            <div class="evi-card-body">
+              <img src="accuracy_curve.png" alt="Training and Validation Accuracy over 20 epochs"
+                onerror="this.style.opacity='0.3'; this.alt='accuracy_curve.png';">
+            </div>
+          </div>
+
+          <div class="evi-card">
+            <div class="evi-card-header">
+              <span class="evi-card-title">LOSS CONVERGENCE</span>
+              <span class="evi-card-tag">TRAIN & VAL LOSS</span>
+            </div>
+            <div class="evi-card-body">
+              <img src="loss_curve.png" alt="Training and Validation Loss over 20 epochs"
+                onerror="this.style.opacity='0.3'; this.alt='loss_curve.png';">
+            </div>
+          </div>
+
+          <div class="evi-card full-width">
+            <div class="evi-card-header">
+              <span class="evi-card-title">CLASS CONFUSION</span>
+              <span class="evi-card-tag">10 × 10 · MNIST TEST SET</span>
+            </div>
+            <div class="evi-card-body" style="text-align:center;">
+              <img src="confusion_matrix.png" alt="10×10 Confusion Matrix" style="max-width:480px; margin:0 auto;"
+                onerror="this.style.opacity='0.3'; this.alt='confusion_matrix.png';">
+            </div>
+          </div>
+
+          <div class="evi-card full-width">
+            <div class="evi-card-header">
+              <span class="evi-card-title">CLASSIFICATION PERFORMANCE</span>
+              <span class="evi-card-tag">PRECISION · RECALL · F1</span>
+            </div>
+            <div class="evi-card-body">
+              <table class="clf-table">
+                <thead>
+                  <tr><th>CLASS</th><th>PRECISION</th><th>RECALL</th><th>F1-SCORE</th><th>SUPPORT</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>0</td><td>99.09%</td><td>99.49%</td><td>99.29%</td><td>980</td></tr>
+                  <tr><td>1</td><td>99.38%</td><td>99.47%</td><td>99.43%</td><td>1135</td></tr>
+                  <tr><td>2</td><td>99.03%</td><td>98.84%</td><td>98.93%</td><td>1032</td></tr>
+                  <tr><td>3</td><td>99.02%</td><td>99.60%</td><td>99.31%</td><td>1010</td></tr>
+                  <tr><td>4</td><td>98.69%</td><td>99.49%</td><td>99.09%</td><td>982</td></tr>
+                  <tr><td>5</td><td>99.44%</td><td>98.88%</td><td>99.16%</td><td>892</td></tr>
+                  <tr><td>6</td><td>99.47%</td><td>98.75%</td><td>99.11%</td><td>958</td></tr>
+                  <tr><td>7</td><td>98.36%</td><td>99.22%</td><td>98.79%</td><td>1028</td></tr>
+                  <tr><td>8</td><td>99.38%</td><td>99.08%</td><td>99.23%</td><td>974</td></tr>
+                  <tr><td>9</td><td>99.50%</td><td>98.41%</td><td>98.95%</td><td>1009</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-note" role="note">
+          <div class="exp-note-label">EXPERIMENTAL NOTE</div>
+          <div class="exp-note-text">
+            MNIST benchmark performance reflects evaluation on the standard 10,000-sample MNIST test set.
+            Real-world trackpad handwriting may vary due to stroke thickness, positioning, scale, and individual writing style.
+            These metrics should be interpreted as in-distribution performance only.
+          </div>
+        </div>
+
+        <!-- About section inline -->
+        <div style="margin-top: 64px; width:100%; max-width: 600px;">
+          <div class="sec-heading">
+            <span class="sec-num">ABOUT</span>
+            <h2 class="sec-title">About NEUROGLYPH</h2>
+          </div>
+
+          <div class="about-content">
+            <p class="about-intro-text">
+              NEUROGLYPH is an interactive deep-learning system designed to explore how convolutional neural networks interpret handwritten numerical patterns.
+            </p>
+
+            <div class="about-specs">
+              <div class="about-spec"><div class="about-spec-key">INPUT</div><div class="about-spec-val">Trackpad-based handwritten stroke</div></div>
+              <div class="about-spec"><div class="about-spec-key">MODEL</div><div class="about-spec-val">Convolutional Neural Network</div></div>
+              <div class="about-spec"><div class="about-spec-key">DATASET</div><div class="about-spec-val">MNIST (60K train · 10K test)</div></div>
+              <div class="about-spec"><div class="about-spec-key">OUTPUT</div><div class="about-spec-val">Digit classification 0 – 9</div></div>
+            </div>
+
+            <div class="about-subsection">
+              <div class="about-sub-title">Technical Title</div>
+              <div class="about-sub-text">Trackpad-Based Handwritten Digit Recognition Using Convolutional Neural Network</div>
+            </div>
+
+            <div class="about-subsection">
+              <div class="about-sub-title">Technology Stack</div>
+              <div class="tech-pills">
+                <span class="tech-pill">Python</span>
+                <span class="tech-pill">TensorFlow 2.x</span>
+                <span class="tech-pill">Keras</span>
+                <span class="tech-pill">NumPy</span>
+                <span class="tech-pill">Pillow</span>
+                <span class="tech-pill">Flask</span>
+                <span class="tech-pill">HTML5 Canvas</span>
+              </div>
+            </div>
+
+            <div class="about-academic-note" role="note">
+              <div class="acad-label">ACADEMIC NOTE</div>
+              <div class="acad-text">
+                Built as an academic exploration of deep learning, image preprocessing, and human-computer interaction.
+                No claims of universal handwriting recognition accuracy beyond MNIST distribution.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="site-footer">
+    <div class="footer-brand">NEUROGLYPH</div>
+    <div class="footer-meta">Trackpad-Based Handwritten Digit Recognition · CNN / MNIST · Academic Deep Learning Project · Python · TensorFlow · Keras</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
